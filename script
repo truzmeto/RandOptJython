@@ -1,0 +1,20 @@
+#!/bin/bash
+# edit the classpath to to the location of your ABAGAIL jar file
+export CLASSPATH=../ABAGAIL/ABAGAIL.jar:$CLASSPATH
+mkdir -p data plots output
+
+# continuous peaks
+echo "continuous peaks"
+jython continuouspeaks.py > output/count_peaks.txt
+
+# knapsack
+echo "Running knapsack"
+jython knapsack.py > output/knapsack.txt
+
+# traveling salesman
+echo "Running traveling salesman test"
+jython travelingsalesman.py > output/tr_sales.txt
+
+# abalone test
+#echo "Running abalone test"
+#jython abalone_test.py
