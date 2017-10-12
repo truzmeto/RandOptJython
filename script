@@ -16,5 +16,5 @@ echo "Running traveling salesman test"
 jython travelingsalesman.py > output/tr_sales.txt
 
 # abalone test
-#echo "Running abalone test"
-#jython abalone_test.py
+echo "Running abalone test"
+jython abalone_test.py > output/abalone_results.txt

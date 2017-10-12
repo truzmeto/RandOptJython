@@ -5,6 +5,8 @@ or more than 15 rings.
 
 Based on AbaloneTest.java by Hannah Lau
 """
+from __future__ import with_statement
+
 import os
 import csv
 import time
@@ -13,13 +15,13 @@ from func.nn.backprop import BackPropagationNetworkFactory
 from shared import SumOfSquaresError, DataSet, Instance
 from opt.example import NeuralNetworkOptimizationProblem
 
+
 import opt.RandomizedHillClimbing as RandomizedHillClimbing
 import opt.SimulatedAnnealing as SimulatedAnnealing
 import opt.ga.StandardGeneticAlgorithm as StandardGeneticAlgorithm
 
-from __future__ import with_statement
 
-INPUT_FILE = os.path.join("..", "src", "opt", "test", "abalone.txt")
+INPUT_FILE = os.path.join("..","ABAGAIL","src", "opt", "test", "abalone.txt")
 
 INPUT_LAYER = 7
 HIDDEN_LAYER = 5
