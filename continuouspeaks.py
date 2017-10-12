@@ -67,7 +67,7 @@ for iters in niters:
     value = 0
     for isample in range(nsample):
         fit.train()
-        print "RHC " + str(ef.value(rhc.getOptimal())), isample
+      # print "RHC " + str(ef.value(rhc.getOptimal())), isample
         value += ef.value(rhc.getOptimal())
     end = time.time()
     clock_time = (end - start)/nsample    
