@@ -75,7 +75,7 @@ hcp = GenericHillClimbingProblem(ef, odd, nf)
 gap = GenericGeneticAlgorithmProblem(ef, odd, mf, cf)
 
 nsample = 10
-niters = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000]
+niters = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
 
 #-- R-Hill Climbing
 rhc = RandomizedHillClimbing(hcp)
@@ -90,12 +90,11 @@ for iters in niters:
     clock_time = (end - start)/nsample    
     value = round(value/nsample,2)    
     print "RHC " + str(1/value),   iters,  clock_time
-print "Route:"
+
 path = []
 for x in range(0,N):
     path.append(rhc.getOptimal().getDiscrete(x))
-print path #, points[path][0], points[path][1] 
-
+    print "Rout_RHC", path[x] , points[path[x]][0], points[path[x]][1]
 
 #-- Simulated Annealing
 sa = SimulatedAnnealing(1E12, .999, hcp)
@@ -110,13 +109,13 @@ for iters in niters:
     clock_time = (end - start)/nsample    
     value = round(value/nsample,2)    
     print "SA " + str(1/value),  iters, clock_time
-print "Route:"
+
 path = []
 for x in range(0,N):
     path.append(sa.getOptimal().getDiscrete(x))
-print path
+    print "Rout_SA", path[x] , points[path[x]][0], points[path[x]][1]
 
-
+    
 #-- Genetic Algorithm
 ga = StandardGeneticAlgorithm(2000, 1500, 250, gap)
 for iters in niters:
@@ -130,12 +129,11 @@ for iters in niters:
     clock_time = (end - start)/nsample    
     value = round(value/nsample,2)    
     print "GA " + str(1/value),  iters, clock_time
-print "Route:"
+
 path = []
 for x in range(0,N):
     path.append(ga.getOptimal().getDiscrete(x))
-print path
-
+    print "Rout_GA", path[x] , points[path[x]][0], points[path[x]][1]
 
 #-- MIMIC    
 # for mimic we use a sort encoding
@@ -160,7 +158,6 @@ for iters in niters:
     value = round(value/nsample,2)    
     print "MIMIC " + str(1/value),  iters, clock_time
 
-print "Route:"
 path = []
 optimal = mimic.getOptimal()
 fill = [0] * optimal.size()
