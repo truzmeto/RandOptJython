@@ -121,13 +121,14 @@ ga = StandardGeneticAlgorithm(2000, 1500, 250, gap)
 for iters in niters:
     start = time.time()
     fit = FixedIterationTrainer(ga, iters)
-    value = 0
-    for isample in range(nsample):
-        fit.train()
-        value += ef.value(ga.getOptimal())
+    #value = 0
+    #for isample in range(nsample):
+    fit.train()
+    #value += ef.value(ga.getOptimal())
+    value = ef.value(ga.getOptimal())
     end = time.time()
-    clock_time = (end - start)/nsample    
-    value = round(value/nsample,2)    
+    clock_time = (end - start)#/nsample    
+    value = round(value,2)    
     print "GA " + str(1/value),  iters, clock_time
 
 path = []
@@ -149,13 +150,14 @@ niters = [50, 100, 200, 500, 600, 700, 800, 1000, 1500, 2000]
 for iters in niters:
     start = time.time()
     fit = FixedIterationTrainer(mimic, iters)
-    value = 0
-    for isample in range(nsample):
-        fit.train()
-        value += ef.value(mimic.getOptimal())
+    # value = 0
+    # for isample in range(nsample):
+    fit.train()
+    #value += ef.value(mimic.getOptimal())
+    value = ef.value(mimic.getOptimal())
     end = time.time()
-    clock_time = (end - start)/nsample    
-    value = round(value/nsample,2)    
+    clock_time = (end - start)#/nsample    
+    value = round(value,2)    
     print "MIMIC " + str(1/value),  iters, clock_time
 
 path = []
