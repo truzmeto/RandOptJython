@@ -59,12 +59,9 @@ N = 40
 random = Random()
 
 points = [[0 for x in xrange(2)] for x in xrange(N)]
-
 for i in range(0, len(points)):
     points[i][0] = random.nextDouble()
     points[i][1] = random.nextDouble()
-#print points
-
     
 ef = TravelingSalesmanRouteEvaluationFunction(points)
 odd = DiscretePermutationDistribution(N)
@@ -77,7 +74,8 @@ gap = GenericGeneticAlgorithmProblem(ef, odd, mf, cf)
 nsample = 10
 niters = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
 
-#-- R-Hill Climbing
+##################################################################################################
+#-------------------------------------- R-Hill Climbing ------------------------------------------
 rhc = RandomizedHillClimbing(hcp)
 for iters in niters:
     start = time.time()
@@ -96,7 +94,9 @@ for x in range(0,N):
     path.append(rhc.getOptimal().getDiscrete(x))
     print "Rout_RHC", path[x] , points[path[x]][0], points[path[x]][1]
 
-#-- Simulated Annealing
+    
+###################################################################################################
+#--------------------------------- Simulated Annealing --------------------------------------------
 sa = SimulatedAnnealing(1E12, .999, hcp)
 for iters in niters:
     start = time.time()
@@ -115,8 +115,10 @@ for x in range(0,N):
     path.append(sa.getOptimal().getDiscrete(x))
     print "Rout_SA", path[x] , points[path[x]][0], points[path[x]][1]
 
+
     
-#-- Genetic Algorithm
+##################################################################################################    
+#------------------- Genetic Algorithm ----------------------------------------------------------#
 ga = StandardGeneticAlgorithm(2000, 1500, 250, gap)
 for iters in niters:
     start = time.time()
@@ -136,8 +138,9 @@ for x in range(0,N):
     path.append(ga.getOptimal().getDiscrete(x))
     print "Rout_GA", path[x] , points[path[x]][0], points[path[x]][1]
 
-#-- MIMIC    
-# for mimic we use a sort encoding
+    
+##################################################################################################    
+#--------------------- MIMIC: for mimic we use a sort encoding ----------------------------------#
 ef = TravelingSalesmanSortEvaluationFunction(points);
 fill = [N] * N
 ranges = array('i', fill)
@@ -146,7 +149,7 @@ df = DiscreteDependencyTree(.1, ranges);
 pop = GenericProbabilisticOptimizationProblem(ef, odd, df);
 
 mimic = MIMIC(500, 100, pop)
-niters = [50, 100, 200, 500, 600, 700, 800, 1000, 1500, 2000]
+niters = [50, 200, 500, 800, 1000, 1200, 1500, 2000, 4000, 10000]
 for iters in niters:
     start = time.time()
     fit = FixedIterationTrainer(mimic, iters)
@@ -160,12 +163,15 @@ for iters in niters:
     value = round(value,2)    
     print "MIMIC " + str(1/value),  iters, clock_time
 
-path = []
 optimal = mimic.getOptimal()
 fill = [0] * optimal.size()
 ddata = array('d', fill)
+path = []
 for i in range(0,len(ddata)):
     ddata[i] = optimal.getContinuous(i)
 order = ABAGAILArrays.indices(optimal.size())
 ABAGAILArrays.quicksort(ddata, order)
-print order
+for x in range(0,N):
+    path.append(order[x])
+    print "Rout_MIMIC", path[x] , points[path[x]][0], points[path[x]][1]
+#print "Done running, go take a shower!"

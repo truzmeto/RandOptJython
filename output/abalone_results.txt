@@ -1,0 +1,61 @@
+
+Error results for RHC
+---------------------------
+379.857
+381.702
+388.412
+391.383
+375.892
+430.589
+367.869
+374.111
+363.625
+368.219
+
+Error results for SA
+---------------------------
+390.696
+388.167
+388.167
+389.229
+389.654
+343.646
+342.240
+350.458
+352.215
+359.022
+
+Error results for GA
+---------------------------
+325.136
+398.464
+394.827
+588.275
+281.609
+438.031
+432.414
+360.269
+235.688
+455.751
+
+Results for RHC: 
+Correctly classified 3813 instances.
+Incorrectly classified 364 instances.
+Percent correctly classified: 91.286%
+Training time: 0.277 seconds
+Testing time: 0.024 seconds
+
+Results for SA: 
+Correctly classified 3813 instances.
+Incorrectly classified 364 instances.
+Percent correctly classified: 91.286%
+Training time: 0.179 seconds
+Testing time: 0.019 seconds
+
+Results for GA: 
+Correctly classified 3813 instances.
+Incorrectly classified 364 instances.
+Percent correctly classified: 91.286%
+Training time: 2.238 seconds
+Testing time: 0.015 seconds
+

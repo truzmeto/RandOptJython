@@ -21,12 +21,12 @@ import opt.SimulatedAnnealing as SimulatedAnnealing
 import opt.ga.StandardGeneticAlgorithm as StandardGeneticAlgorithm
 
 
-INPUT_FILE = os.path.join("..","ABAGAIL","src", "opt", "test", "abalone.txt")
+INPUT_FILE = os.path.join(".","data","abalone.txt")
 
 INPUT_LAYER = 7
 HIDDEN_LAYER = 5
 OUTPUT_LAYER = 1
-TRAINING_ITERATIONS = 1000
+TRAINING_ITERATIONS = 10
 
 
 def initialize_instances():

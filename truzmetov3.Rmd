@@ -1,0 +1,164 @@
+---
+title: 'CS7641 Assignment II: Randomized Optimization'
+author: "T. Ruzmetov"
+date: "October 10, 2017"
+output: pdf_document
+---
+
+\fontfamily{cmr}
+\fontsize{12}{22}
+\selectfont
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(warn=-1)
+```
+
+```{r, echo=FALSE}
+library("lattice")
+library("plyr")
+library("ggplot2")
+library("Rmisc")
+```
+
+
+```{r, echo=FALSE}
+# input the data
+col_names <- c("algo_type", "Fitness", "Niters", "Time")
+co_peaks <- read.table("output/count_peaks.txt", sep = "", header = FALSE, col.names = col_names)
+knapsack <- read.table("output/knapsack.txt", sep = "", header = FALSE, col.names = col_names)
+tr_salesman <- read.table("output/tr_sales.txt", sep = "", header = FALSE, col.names = col_names)
+
+# extract routes from salesman data
+rout_data <- tr_salesman[tr_salesman$algo_type == "Rout_RHC"  |
+                           tr_salesman$algo_type == "Rout_SA" |
+                           tr_salesman$algo_type == "Rout_GA" | 
+                           tr_salesman$algo_type == "Rout_MIMIC",]
+names(rout_data) <- c("algo_type", "rout_sequence", "X", "Y" )
+
+tr_salesman <- tr_salesman[tr_salesman$algo_type == "RHC" |
+                           tr_salesman$algo_type == "SA"  |
+                           tr_salesman$algo_type == "GA"  |
+                           tr_salesman$algo_type == "MIMIC",]
+```
+
+
+
+## Continuous Peaks
+
+```{r,echo=FALSE,fig.height=4,fig.width=8}
+
+p1 <- ggplot(co_peaks , aes(x= Niters, y=Fitness, colour = algo_type)) +
+  geom_line() + 
+  geom_point() +
+  theme_bw() +
+  labs(title = "Continuous Peaks", x = "Niters", y = "Fitness", color="") +
+  theme(legend.position = c(0.8,0.3),
+        axis.title = element_text(size = 16.0),
+        axis.text = element_text(size=10, face = "bold"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+p2 <- ggplot(co_peaks , aes(x= Niters, y=Time, colour = algo_type)) +
+    geom_line() + 
+    geom_point() +
+    theme_bw() +
+    labs(title = "Continuous Peaks", x = "Niters", y = "Clock Time", color="") +
+    theme(legend.position = c(0.8,0.3),
+        axis.title = element_text(size = 16.0),
+        axis.text = element_text(size=10, face = "bold"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+multiplot(p1,p2,cols=2)
+```
+
+
+## Traveling Salesman
+
+```{r,echo=FALSE,fig.height=4,fig.width=8}
+p1 <- ggplot(tr_salesman , aes(x= Niters, y= Fitness, colour = algo_type)) +
+  geom_line() + 
+  geom_point() +
+  theme_bw() +
+  labs(title = " Traveling Salesman", x = "Niters", y = "Optimum Distance", color="") +
+  theme(legend.position = c(0.8,0.5),
+        axis.title = element_text(size = 16.0),
+        axis.text = element_text(size=10, face = "bold"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+p2 <- ggplot(tr_salesman , aes(x= Niters, y=Time, colour = algo_type)) +
+    geom_line() + 
+    geom_point() +
+    theme_bw() +
+    labs(title = "Traveling Salesman", x = "Niters", y = "Clock Time", color="") +
+    theme(legend.position = c(0.8,0.5),
+        axis.title = element_text(size = 16.0),
+        axis.text = element_text(size=10, face = "bold"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+multiplot(p1,p2,cols=2)
+```
+
+
+```{r,echo=FALSE,fig.height=3.5,fig.width=10}
+RHC <- rout_data[rout_data$algo_type == "Rout_RHC",]
+SA <- rout_data[rout_data$algo_type == "Rout_SA",]
+GA <- rout_data[rout_data$algo_type == "Rout_GA",]
+MIMIC <- rout_data[rout_data$algo_type == "Rout_MIMIC",]
+
+par(mfrow=c(1,4))
+plot(RHC$X,RHC$Y, type="o", xlab="X", ylab="Y", col = "blue", lwd = 2, main = "RHC")
+plot(SA$X,SA$Y, type="o", xlab="X", ylab="", yaxt='n', col = "red", lwd = 2, main = "SA")
+plot(GA$X,GA$Y, type="o", xlab="X", ylab="", yaxt='n', col = "cyan", lwd = 2, main = "GA")
+plot(MIMIC$X,MIMIC$Y, type="o", xlab="X", ylab="", yaxt='n', col = "orange", lwd = 2, main = "MIMIC")
+
+```
+
+
+## Knapcack
+
+```{r,echo=FALSE,fig.height=4,fig.width=8}
+
+p1 <- ggplot(knapsack , aes(x= Niters, y= Fitness, colour = algo_type)) +
+  geom_line() + 
+  geom_point() +
+  theme_bw() +
+  labs(title = " Knapsack Problem", x = "Niters", y = "Fitness", color="") +
+  theme(legend.position = c(0.8,0.3),
+        axis.title = element_text(size = 16.0),
+        axis.text = element_text(size=10, face = "bold"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+p2 <- ggplot(knapsack , aes(x= Niters, y=Time, colour = algo_type)) +
+    geom_line() + 
+    geom_point() +
+    theme_bw() +
+    labs(title = "Knapsack Problem", x = "Niters", y = "Clock Time", color="") +
+    theme(legend.position = c(0.8,0.3),
+        axis.title = element_text(size = 16.0),
+        axis.text = element_text(size=10, face = "bold"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+multiplot(p1,p2,cols=2)
+```
+
+
+
+

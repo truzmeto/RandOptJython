@@ -106,7 +106,8 @@ for iters in niters:
 
 #-- MIMIC 
 mimic = MIMIC(200, 20, pop)
-niters = [50, 100, 200, 500, 600, 700, 800, 1000, 1500, 2000]
+niters = [50, 200, 500, 800, 1000, 1200, 1500, 2000, 4000, 10000]
+
 for iters in niters:
     start = time.time()
     fit = FixedIterationTrainer(mimic, iters)
