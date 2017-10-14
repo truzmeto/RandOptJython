@@ -122,7 +122,7 @@ data$country <- NULL
 data$income <- gsub("K.", "", data$income)
 data$income <- gsub("K", "", data$income)
 data$income <- as.factor(data$income)
-data$income = as.factor(ifelse(data$income == data$income[1],"low","high"))
+data$income = as.factor(ifelse(data$income == data$income[1],0,1))
 #-------------------------------------------------------------------------
 
 ## train test split
@@ -131,5 +131,20 @@ test <- data[data$set == "test",]
 train$set <- NULL
 test$set <- NULL
 
-write.table(train, file = "clean_data/adult_train.txt", row.names = FALSE, col.names = TRUE, sep = "  ")
-write.table(test, file = "clean_data/adult_test.txt", row.names = FALSE, col.names = TRUE, sep = "  ")
+# convert factor features to numeric
+FacToString <- function(input) {
+  for(i in 1:ncol(input)){
+      if(any(class(input[,i]) == "factor")) { 
+      input[,i] <- as.integer(as.factor(input[,i])) - 1  
+      }
+  }
+  input
+}
+
+
+train <- FacToString(train)
+test <- FacToString(test)
+
+
+write.table(train, file = "clean_data/adult_train.txt", row.names = FALSE, col.names = FALSE, sep = ",")
+write.table(test, file = "clean_data/adult_test.txt", row.names = FALSE, col.names = FALSE, sep = ",")

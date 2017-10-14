@@ -21,12 +21,12 @@ import opt.SimulatedAnnealing as SimulatedAnnealing
 import opt.ga.StandardGeneticAlgorithm as StandardGeneticAlgorithm
 
 
-INPUT_FILE = os.path.join(".","data","abalone.txt")
+INPUT_FILE = os.path.join(".","clean_data","adult_train.txt")
 
-INPUT_LAYER = 7
+INPUT_LAYER = 11
 HIDDEN_LAYER = 5
 OUTPUT_LAYER = 1
-TRAINING_ITERATIONS = 200
+TRAINING_ITERATIONS = 30
 
 def initialize_instances():
     """Read the abalone.txt CSV data into a list of instances."""
@@ -38,8 +38,8 @@ def initialize_instances():
 
         for row in reader:
             instance = Instance([float(value) for value in row[:-1]])
-            instance.setLabel(Instance(0 if float(row[-1]) < 15 else 1))
-            instances.append(instance)
+            #instance.setLabel(Instance(0 if float(row[-1]) < 15 else 1))
+            #instances.append(instance)
 
     return instances
 
