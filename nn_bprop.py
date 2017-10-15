@@ -50,7 +50,6 @@ def errorOnDataSet(network,ds,measure):
         network.run()
         actual = instance.getLabel().getContinuous()
         predicted = network.getOutputValues().get(0)
-        predicted = max(min(predicted,1),0)
         if abs(predicted - actual) < 0.5:
             correct += 1
         else:
