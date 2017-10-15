@@ -1,18 +1,58 @@
 ---
-title: 'CS7641 Assignment II: Randomized Optimization'
+title: 'CS7641 Assignment II: Prediction via Randomized Optimization'
 author: "T. Ruzmetov"
 date: "October 10, 2017"
-output: pdf_document
+output:
+    pdf_document:
+        fig_caption: yes
+    
 ---
 
 \fontfamily{cmr}
-\fontsize{12}{22}
+\fontsize{11}{22}
 \selectfont
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(warn=-1)
 ```
+
+## Introduction
+Purpose of this work is to understand how various randomized optimization techniques like "Hill Climbing", "Simulated Annealing", "Genetic Algorithm" and "MIMIC" performe on different problem sets such as "Continuous Peaks Problem",
+"Traveling Salesman" and "Knapsack" problem. In addition, we are asked to test performance of ANN with randomized
+optimization methods such as "Hill Climbing", "Simulated Annealing" and "Genetic Algorithm" against ANN with backpropogation
+method we used on one of the datasets from assignment one.  
+
+
+### Randomized Hill Climbing (RHC)
+
+RHC method is designned to find optimal(usually maximum of fitness function) by randomly choosing starting position
+and moving untill turning point is reached. By performing many iterations RHC chooses best optima among all local
+optimas found. RHC method is fast, but it is not robust in its search for global optima in situations where there are 
+many local peaks. I performed RHC using RandomizedHillClimbing in ABAGAIL via Jython.
+
+### Simulated Annealing (SA)
+
+Simulated Annealing is very widespread optimization technique especially in physics, where it is mostly
+used for energy minimization problems. To find global optima, it randomly samples different states by accepting them
+based on detailed balance condition, while slowly cooling the system. The algorithm, a function of initial temperature
+and cooling rate, strikes a balance between exploring new points and exploiting nearby neighbors in search of local optima.
+I used SimulatedAnnealing in ABAGAIL via Jython.
+
+### Genetic Algorithm (GA)
+
+Inspired by biology, in Genetic Algorithm the population evolves by iteratively mating and mutating parts to
+crossover the best traits and to eliminate irrelevant traits. Large hypothesis space is a major disadvantage of GA,
+which is dictated exponentially by the number of attributes. SA was performed using StandardGeneticAlgorithm in ABAGAIL on
+Java+Jython.
+
+
+## Mutual-Information-Maximizing Input Clustering (MIMIC)
+
+In contrast to most optimization algorithms MIMIC algorithm is unique in its ability to  “remember” previous
+iterations and use sampled probability densities to build structure of the solution space in order to locate global 
+optima. MIMIC was performed using MIMIC built into ABAGAIL with Java via Jython.
+
 
 ```{r, echo=FALSE}
 library("lattice")
@@ -43,20 +83,23 @@ tr_salesman <- tr_salesman[tr_salesman$algo_type == "RHC" |
 ```
 
 
-
 ## Continuous Peaks
 
-```{r,echo=FALSE,fig.height=4,fig.width=8}
+In Continuous Peaks problem we are given a fitness function in 1D space with multiple optimas, where the main task
+is to find global optima. Given its simplicity it is very good candidate for learning purpose. I tested the performance of above mentioned 4 randomized optimization methods on this problem by making some modifications into provided Jython code
+under ABAGAIL package. 
+
+```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "Continuous Peaks Performance"}
 
 p1 <- ggplot(co_peaks , aes(x= Niters, y=Fitness, colour = algo_type)) +
   geom_line() + 
   geom_point() +
   theme_bw() +
-  labs(title = "Continuous Peaks", x = "Niters", y = "Fitness", color="") +
-  theme(legend.position = c(0.8,0.3),
-        axis.title = element_text(size = 16.0),
-        axis.text = element_text(size=10, face = "bold"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+  labs(title = "", x = "Niters", y = "Fitness", color="") +
+  theme(legend.position = "none",
+        axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
         #text = element_text(family="Times New Roman"),
         axis.text.x = element_text(colour="black"),
         axis.text.y = element_text(colour="black"))
@@ -65,11 +108,11 @@ p2 <- ggplot(co_peaks , aes(x= Niters, y=Time, colour = algo_type)) +
     geom_line() + 
     geom_point() +
     theme_bw() +
-    labs(title = "Continuous Peaks", x = "Niters", y = "Clock Time", color="") +
-    theme(legend.position = c(0.8,0.3),
-        axis.title = element_text(size = 16.0),
-        axis.text = element_text(size=10, face = "bold"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+    labs(title = "", x = "Niters", y = "Clock Time", color="") +
+    theme(legend.position = c(0.8,0.7),
+        axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
         #text = element_text(family="Times New Roman"),
         axis.text.x = element_text(colour="black"),
         axis.text.y = element_text(colour="black"))
@@ -78,18 +121,21 @@ multiplot(p1,p2,cols=2)
 ```
 
 
+
+\pagebreak 
+
 ## Traveling Salesman
 
-```{r,echo=FALSE,fig.height=4,fig.width=8}
+```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "sdc"}
 p1 <- ggplot(tr_salesman , aes(x= Niters, y= Fitness, colour = algo_type)) +
   geom_line() + 
   geom_point() +
   theme_bw() +
   labs(title = " Traveling Salesman", x = "Niters", y = "Optimum Distance", color="") +
   theme(legend.position = c(0.8,0.5),
-        axis.title = element_text(size = 16.0),
-        axis.text = element_text(size=10, face = "bold"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+        axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
         #text = element_text(family="Times New Roman"),
         axis.text.x = element_text(colour="black"),
         axis.text.y = element_text(colour="black"))
@@ -99,10 +145,10 @@ p2 <- ggplot(tr_salesman , aes(x= Niters, y=Time, colour = algo_type)) +
     geom_point() +
     theme_bw() +
     labs(title = "Traveling Salesman", x = "Niters", y = "Clock Time", color="") +
-    theme(legend.position = c(0.8,0.5),
-        axis.title = element_text(size = 16.0),
-        axis.text = element_text(size=10, face = "bold"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+    theme(legend.position = "none",
+        axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
         #text = element_text(family="Times New Roman"),
         axis.text.x = element_text(colour="black"),
         axis.text.y = element_text(colour="black"))
@@ -111,7 +157,7 @@ multiplot(p1,p2,cols=2)
 ```
 
 
-```{r,echo=FALSE,fig.height=3.5,fig.width=10}
+```{r,echo=FALSE,fig.height=3.0,fig.width=10,fig.cap= "sdvb"}
 RHC <- rout_data[rout_data$algo_type == "Rout_RHC",]
 SA <- rout_data[rout_data$algo_type == "Rout_SA",]
 GA <- rout_data[rout_data$algo_type == "Rout_GA",]
@@ -128,7 +174,7 @@ plot(MIMIC$X,MIMIC$Y, type="o", xlab="X", ylab="", yaxt='n', col = "orange", lwd
 
 ## Knapcack
 
-```{r,echo=FALSE,fig.height=4,fig.width=8}
+```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "hfn"}
 
 p1 <- ggplot(knapsack , aes(x= Niters, y= Fitness, colour = algo_type)) +
   geom_line() + 
@@ -136,9 +182,9 @@ p1 <- ggplot(knapsack , aes(x= Niters, y= Fitness, colour = algo_type)) +
   theme_bw() +
   labs(title = " Knapsack Problem", x = "Niters", y = "Fitness", color="") +
   theme(legend.position = c(0.8,0.3),
-        axis.title = element_text(size = 16.0),
-        axis.text = element_text(size=10, face = "bold"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+        axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
         #text = element_text(family="Times New Roman"),
         axis.text.x = element_text(colour="black"),
         axis.text.y = element_text(colour="black"))
@@ -148,10 +194,10 @@ p2 <- ggplot(knapsack , aes(x= Niters, y=Time, colour = algo_type)) +
     geom_point() +
     theme_bw() +
     labs(title = "Knapsack Problem", x = "Niters", y = "Clock Time", color="") +
-    theme(legend.position = c(0.8,0.3),
-        axis.title = element_text(size = 16.0),
-        axis.text = element_text(size=10, face = "bold"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+    theme(legend.position = "none",
+        axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
         #text = element_text(family="Times New Roman"),
         axis.text.x = element_text(colour="black"),
         axis.text.y = element_text(colour="black"))
@@ -159,6 +205,27 @@ p2 <- ggplot(knapsack , aes(x= Niters, y=Time, colour = algo_type)) +
 multiplot(p1,p2,cols=2)
 ```
 
+
+## ANN with Randomized Optimization 
+
+```{r, echo=FALSE,fig.height=3,fig.width=5,fig.cap= ""}
+col_names <- c("iters","RMSE","Temp")
+AD_sa_cv <- read.table("output/AD_resultsCV_temp", sep = "", header = FALSE, col.names = col_names)
+AD_sa_cv$Temp <- as.factor(AD_sa_cv$Temp)
+
+p <- ggplot(AD_sa_cv , aes(x= iters, y= sqrt(RMSE), colour = Temp)) +
+  geom_line() + 
+  geom_point() +
+  theme_bw() +
+  labs(title = " ", x = "Niters", y = "RMSE", color="") +
+  theme(axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+p
+```
 
 
 
