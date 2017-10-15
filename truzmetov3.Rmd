@@ -18,10 +18,18 @@ options(warn=-1)
 ```
 
 ## Introduction
-Purpose of this work is to understand how various randomized optimization techniques like "Hill Climbing", "Simulated Annealing", "Genetic Algorithm" and "MIMIC" performe on different problem sets such as "Continuous Peaks Problem",
+Purpose of this work is to understand how various randomized optimization techniques like "Hill Climbing",
+"Simulated Annealing", "Genetic Algorithm" and "MIMIC" performe on different problem sets such as "Continuous Peaks Problem",
 "Traveling Salesman" and "Knapsack" problem. In addition, we are asked to test performance of ANN with randomized
 optimization methods such as "Hill Climbing", "Simulated Annealing" and "Genetic Algorithm" against ANN with backpropogation
 method we used on one of the datasets from assignment one.  
+
+
+### Data Preparation
+
+Adult data set is used making exactly same train test splitting as in a previous assignment. All multi class categorical
+variables are mapped into binary class numeric variables[0,1], which increased number of features from 11 to 66. Data preprocessing
+is performed with R language and stored as csv inside clean_data folder. 
 
 
 ### Randomized Hill Climbing (RHC)
@@ -47,7 +55,7 @@ which is dictated exponentially by the number of attributes. SA was performed us
 Java+Jython.
 
 
-## Mutual-Information-Maximizing Input Clustering (MIMIC)
+### Mutual-Information-Maximizing Input Clustering (MIMIC)
 
 In contrast to most optimization algorithms MIMIC algorithm is unique in its ability to  “remember” previous
 iterations and use sampled probability densities to build structure of the solution space in order to locate global 
@@ -120,18 +128,29 @@ p2 <- ggplot(co_peaks , aes(x= Niters, y=Time, colour = algo_type)) +
 multiplot(p1,p2,cols=2)
 ```
 
+I made comparison between models by plotting fitness function versus number of randomized iterations as depicted in Fig.1. As shown,
+GA and MIMIC models gave pest performance by achieving optimium value at about Fitness=112. One has to note that due to its extreme time
+consumption MIMIC model was iterated only 1000 times and yet achived best performance. For a large number of iterations Genetic Algorithm 
+resulted in best performence. It reached near optimum value after 10000 iterations which is a late when compared to other methods. The worst 
+performance is shown by RHC, where it could only reach Fitness=80 which is probably local optima near global one. Overall, SA and RHC algorithms
+are the fastest in performance. MIMIC was the slowest and GA was somewhere in the middle. 
 
 
 \pagebreak 
 
 ## Traveling Salesman
 
-```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "sdc"}
+In travelling salesman problem one has to choose a rout with minimum net distance between multiple cities assuming each city is visited once.
+We make a little adjustment to a problem by choosing a fitness function as inverse of net distance traveled, so that searching for max of fitness
+function is equivalent to searching for min distance.
+
+
+```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "Traveling Salesman Performance"}
 p1 <- ggplot(tr_salesman , aes(x= Niters, y= Fitness, colour = algo_type)) +
   geom_line() + 
   geom_point() +
   theme_bw() +
-  labs(title = " Traveling Salesman", x = "Niters", y = "Optimum Distance", color="") +
+  labs(title = " ", x = "Niters", y = "Optimum Distance", color="") +
   theme(legend.position = c(0.8,0.5),
         axis.title = element_text(size = 12.0),
         axis.text = element_text(size=8, face = "bold"),
@@ -144,7 +163,7 @@ p2 <- ggplot(tr_salesman , aes(x= Niters, y=Time, colour = algo_type)) +
     geom_line() + 
     geom_point() +
     theme_bw() +
-    labs(title = "Traveling Salesman", x = "Niters", y = "Clock Time", color="") +
+    labs(title = "", x = "Niters", y = "Clock Time", color="") +
     theme(legend.position = "none",
         axis.title = element_text(size = 12.0),
         axis.text = element_text(size=8, face = "bold"),
@@ -157,7 +176,9 @@ multiplot(p1,p2,cols=2)
 ```
 
 
-```{r,echo=FALSE,fig.height=3.0,fig.width=10,fig.cap= "sdvb"}
+
+
+```{r,echo=FALSE,fig.height=3.0,fig.width=10,fig.cap= "Final best model path for all four algorithms"}
 RHC <- rout_data[rout_data$algo_type == "Rout_RHC",]
 SA <- rout_data[rout_data$algo_type == "Rout_SA",]
 GA <- rout_data[rout_data$algo_type == "Rout_GA",]
@@ -174,13 +195,13 @@ plot(MIMIC$X,MIMIC$Y, type="o", xlab="X", ylab="", yaxt='n', col = "orange", lwd
 
 ## Knapcack
 
-```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "hfn"}
+```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "Knapsack Problem Performance"}
 
 p1 <- ggplot(knapsack , aes(x= Niters, y= Fitness, colour = algo_type)) +
   geom_line() + 
   geom_point() +
   theme_bw() +
-  labs(title = " Knapsack Problem", x = "Niters", y = "Fitness", color="") +
+  labs(title = " ", x = "Niters", y = "Fitness", color="") +
   theme(legend.position = c(0.8,0.3),
         axis.title = element_text(size = 12.0),
         axis.text = element_text(size=8, face = "bold"),
@@ -193,7 +214,7 @@ p2 <- ggplot(knapsack , aes(x= Niters, y=Time, colour = algo_type)) +
     geom_line() + 
     geom_point() +
     theme_bw() +
-    labs(title = "Knapsack Problem", x = "Niters", y = "Clock Time", color="") +
+    labs(title = "", x = "Niters", y = "Clock Time", color="") +
     theme(legend.position = "none",
         axis.title = element_text(size = 12.0),
         axis.text = element_text(size=8, face = "bold"),
@@ -208,24 +229,94 @@ multiplot(p1,p2,cols=2)
 
 ## ANN with Randomized Optimization 
 
-```{r, echo=FALSE,fig.height=3,fig.width=5,fig.cap= ""}
-col_names <- c("iters","RMSE","Temp")
-AD_sa_cv <- read.table("output/AD_resultsCV_temp", sep = "", header = FALSE, col.names = col_names)
-AD_sa_cv$Temp <- as.factor(AD_sa_cv$Temp)
 
-p <- ggplot(AD_sa_cv , aes(x= iters, y= sqrt(RMSE), colour = Temp)) +
-  geom_line() + 
-  geom_point() +
+```{r, echo=FALSE,fig.height=3,fig.width=5,fig.cap= "Randomized Hill Climbing on Adult Data"}
+col_names <- c("iters","RMSE_train","RMSE_test")
+AD_rhc <- read.table("output/AD_results_rhc", sep = "", header = FALSE, col.names = col_names)
+
+p <- ggplot(AD_rhc , aes(x=iters)) +
+  geom_line(aes(y = sqrt(RMSE_train), colour = "train")) + 
+  geom_line(aes(y = sqrt(RMSE_test)+0.01, colour = "test")) +
+  #geom_point() +
   theme_bw() +
-  labs(title = " ", x = "Niters", y = "RMSE", color="") +
-  theme(axis.title = element_text(size = 12.0),
+  labs(title = "", x = "Niters", y = "RMSE", color="") +
+  theme(legend.position =c(0.7,0.8), axis.title = element_text(size = 12.0),
         axis.text = element_text(size=8, face = "bold"),
         plot.title = element_text(size = 12, hjust = 0.5),
         #text = element_text(family="Times New Roman"),
         axis.text.x = element_text(colour="black"),
         axis.text.y = element_text(colour="black"))
 p
+
 ```
 
+
+
+```{r, echo=FALSE,fig.height=3.5,fig.width=8,fig.cap= "Simulated Annealing Cooling"}
+col_names <- c("iters","RMSE_train","RMSE_test","Temp")
+AD_sa_cv <- read.table("output/AD_resultsCV_temp", sep = "", header = FALSE, col.names = col_names)
+AD_sa_cv$Temp <- as.factor(AD_sa_cv$Temp)
+
+p1 <- ggplot(AD_sa_cv , aes(x= iters, y= sqrt(RMSE_train), colour = Temp)) +
+  geom_line() + 
+  geom_point() +
+  theme_bw() +
+  labs(title = "training error", x = "Niters", y = "RMSE", color="") +
+  theme(legend.position ="none", axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+p2 <- ggplot(AD_sa_cv , aes(x= iters, y= sqrt(RMSE_test), colour = Temp)) +
+  geom_line() + 
+  geom_point() +
+  theme_bw() +
+  labs(title = "testing error", x = "Niters", y = "", color="Temperature") +
+  theme(legend.position =c(0.8,0.7),
+        axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+multiplot(p1,p2,cols=2)
+```
+
+
+```{r, echo=FALSE,fig.height=3.5,fig.width=8,fig.cap= "Genetic Algorithm RMSE for different parameters"}
+col_names <- c("iters","RMSE_train","RMSE_test","tuning")
+AD_ga_cv <- read.table("output/AD_resultsCV_ga", sep = "", header = FALSE, col.names = col_names)
+AD_ga_cv$tuning <- as.factor(AD_ga_cv$tuning)
+
+p1 <- ggplot(AD_ga_cv , aes(x= iters, y= sqrt(RMSE_train), colour = tuning)) +
+  geom_line() + 
+  geom_point() +
+  theme_bw() +
+  labs(title = "training error", x = "Niters", y = "RMSE", color="") +
+  theme(legend.position ="none", axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+p2 <- ggplot(AD_ga_cv , aes(x= iters, y= sqrt(RMSE_test), colour = tuning)) +
+  geom_line() + 
+  geom_point() +
+  theme_bw() +
+  labs(title = "testing error", x = "Niters", y = "", color="tuning") +
+  theme(legend.position =c(0.8,0.7),
+        axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+multiplot(p1,p2,cols=2)
+```
 
 
