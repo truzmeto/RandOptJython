@@ -10,6 +10,7 @@ from __future__ import with_statement
 import os
 import csv
 import time
+import sys
 
 from func.nn.backprop import BackPropagationNetworkFactory
 from shared import SumOfSquaresError, DataSet, Instance
@@ -25,10 +26,11 @@ INPUT_FILE_train = os.path.join(".","clean_data","adult_train.txt")
 INPUT_FILE_test = os.path.join(".","clean_data","adult_test.txt")
 
 
-INPUT_LAYER = 11
-HIDDEN_LAYER = 5
+INPUT_LAYER = 66
+HIDDEN_LAYER = 10
 OUTPUT_LAYER = 1
-TRAINING_ITERATIONS = 10
+# passing number of iters from cmd
+TRAINING_ITERATIONS = int(sys.argv[1])
 
 def initialize_instances(file_path):
     """Read the abalone.txt CSV data into a list of instances."""
@@ -56,7 +58,7 @@ def train(oa, network, oaName, instances, measure):
     :param list[Instance] instances:
     :param AbstractErrorMeasure measure:
     """
-    print "\nError results for %s\n---------------------------" % (oaName,)
+    #print "\nError results for %s\n---------------------------" % (oaName,)
 
     for iteration in xrange(TRAINING_ITERATIONS):
         oa.train()
@@ -71,7 +73,7 @@ def train(oa, network, oaName, instances, measure):
             example = Instance(output_values, Instance(output_values.get(0)))
             error += measure.value(output, example)
 
-        print  round(error,3)
+       # print  round(error,3)
 
 
 def main():
@@ -125,11 +127,13 @@ def main():
         end = time.time()
         testing_time = end - start
 
-        results += "------------------------------- reporting on training set ---------------------------"
-        results += "\nResults for %s: \nCorrectly classified %d instances." % (name, correct)
-        results += "\nIncorrectly classified %d instances.\nPercent correctly classified: %0.03f%%" % (incorrect, float(correct)/(correct+incorrect)*100.0)
-        results += "\nTraining time: %0.03f seconds" % (training_time,)
-        results += "\nTesting time: %0.03f seconds\n" % (testing_time,)
+        #results += "------------------------------- reporting on training set ---------------------------"
+        #results += "\nResults for %s: \nCorrectly classified %d instances." % (name, correct)
+        #results += "\nIncorrectly classified %d instances.\nPercent correctly classified: %0.03f%%" % (incorrect, float(correct)/(correct+incorrect)*100.0)
+        #results += "\nTraining time: %0.03f seconds" % (training_time,)
+        #results += "\nTesting time: %0.03f seconds\n" % (testing_time,)
+
+        results += "\n train, %s, %d,  %0.02f, %0.03f\n" % (name, TRAINING_ITERATIONS, float(correct)/(correct+incorrect)*100.0, training_time)
         
         # here we make make prediction on test set-----------------------------------------------------------------------------------------------------
         start = time.time()
@@ -149,10 +153,12 @@ def main():
         end = time.time()
         testing_time = end - start
 
-        results += "------------------------------- reporting on testing set ---------------------------"
-        results += "\nResults for %s: \nCorrectly classified %d instances." % (name, correct)
-        results += "\nIncorrectly classified %d instances.\nPercent correctly classified: %0.03f%%" % (incorrect, float(correct)/(correct+incorrect)*100.0)
-        results += "\nTesting time: %0.03f seconds\n" % (testing_time,)
+        #results += "------------------------------- reporting on testing set ---------------------------"
+        #results += "\nResults for %s: \nCorrectly classified %d instances." % (name, correct)
+        #results += "\nIncorrectly classified %d instances.\nPercent correctly classified: %0.03f%%" % (incorrect, float(correct)/(correct+incorrect)*100.0)
+        #results += "\nTesting time: %0.03f seconds\n" % (testing_time,)
+        
+        results += "\n test  %s  %d  %0.02f  %0.03f\n" % (name, TRAINING_ITERATIONS, float(correct)/(correct+incorrect)*100.0, testing_time)
 
         
     print results

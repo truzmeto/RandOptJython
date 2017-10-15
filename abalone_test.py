@@ -24,9 +24,9 @@ import opt.ga.StandardGeneticAlgorithm as StandardGeneticAlgorithm
 INPUT_FILE = os.path.join(".","data","abalone.txt")
 
 INPUT_LAYER = 7
-HIDDEN_LAYER = 5
+HIDDEN_LAYER = 10
 OUTPUT_LAYER = 1
-TRAINING_ITERATIONS = 200
+TRAINING_ITERATIONS = 10
 
 def initialize_instances():
     """Read the abalone.txt CSV data into a list of instances."""
