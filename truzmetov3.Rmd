@@ -19,23 +19,16 @@ options(warn=-1)
 
 ## Introduction
 Purpose of this work is to understand how various randomized optimization techniques like "Hill Climbing",
-"Simulated Annealing", "Genetic Algorithm" and "MIMIC" performe on different problem sets such as "Continuous Peaks Problem",
+"Simulated Annealing", "Genetic Algorithm" and "MIMIC" perform on different problem sets such as "Continuous Peaks Problem",
 "Traveling Salesman" and "Knapsack" problem. In addition, we are asked to test performance of ANN with randomized
 optimization methods such as "Hill Climbing", "Simulated Annealing" and "Genetic Algorithm" against ANN with backpropogation
 method we used on one of the datasets from assignment one.  
 
 
-### Data Preparation
-
-Adult data set is used making exactly same train test splitting as in a previous assignment. All multi class categorical
-variables are mapped into binary class numeric variables[0,1], which increased number of features from 11 to 66. Data preprocessing
-is performed with R language and stored as csv inside clean_data folder. 
-
-
 ### Randomized Hill Climbing (RHC)
 
-RHC method is designned to find optimal(usually maximum of fitness function) by randomly choosing starting position
-and moving untill turning point is reached. By performing many iterations RHC chooses best optima among all local
+RHC method is designed to find optimal(usually maximum of fitness function) by randomly choosing starting position
+and moving until turning point is reached. By performing many iterations RHC chooses best optima among all local
 optimas found. RHC method is fast, but it is not robust in its search for global optima in situations where there are 
 many local peaks. I performed RHC using RandomizedHillClimbing in ABAGAIL via Jython.
 
@@ -91,14 +84,15 @@ tr_salesman <- tr_salesman[tr_salesman$algo_type == "RHC" |
 ```
 
 
-## Continuous Peaks
+## Part 1: Three Famous Optimization Problems
+
+### Continuous Peaks
 
 In Continuous Peaks problem we are given a fitness function in 1D space with multiple optimas, where the main task
 is to find global optima. Given its simplicity it is very good candidate for learning purpose. I tested the performance of above mentioned 4 randomized optimization methods on this problem by making some modifications into provided Jython code
 under ABAGAIL package. 
 
-```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "Continuous Peaks Performance"}
-
+```{r,echo=FALSE,fig.height=3.,fig.width=7,fig.cap= "Continuous Peaks Performance"}
 p1 <- ggplot(co_peaks , aes(x= Niters, y=Fitness, colour = algo_type)) +
   geom_line() + 
   geom_point() +
@@ -128,24 +122,28 @@ p2 <- ggplot(co_peaks , aes(x= Niters, y=Time, colour = algo_type)) +
 multiplot(p1,p2,cols=2)
 ```
 
+
 I made comparison between models by plotting fitness function versus number of randomized iterations as depicted in Fig.1. As shown,
-GA and MIMIC models gave pest performance by achieving optimium value at about Fitness=112. One has to note that due to its extreme time
-consumption MIMIC model was iterated only 1000 times and yet achived best performance. For a large number of iterations Genetic Algorithm 
-resulted in best performence. It reached near optimum value after 10000 iterations which is a late when compared to other methods. The worst 
+GA and MIMIC models gave pest performance by achieving optimum value at about Fitness=112. One has to note that due to its extreme time
+consumption MIMIC model was iterated only 1000 times and yet achieved best performance. For a large number of iterations Genetic Algorithm 
+resulted in best performance. It reached near optimum value after 10000 iterations which is a late when compared to other methods. The worst 
 performance is shown by RHC, where it could only reach Fitness=80 which is probably local optima near global one. Overall, SA and RHC algorithms
 are the fastest in performance. MIMIC was the slowest and GA was somewhere in the middle. 
 
 
 \pagebreak 
 
-## Traveling Salesman
+### Traveling Salesman
 
-In travelling salesman problem one has to choose a rout with minimum net distance between multiple cities assuming each city is visited once.
+In travelling salesman problem one has to choose a rout with minimum net distance in traveling multiple cities assuming each city is visited once.
 We make a little adjustment to a problem by choosing a fitness function as inverse of net distance traveled, so that searching for max of fitness
-function is equivalent to searching for min distance.
+function is equivalent to searching for min distance. One can easily visualize this problem in a 2D coordinate system, where N points are randomly 
+initialized with (x,y) coordinates. Then those coordinates are used to calculate distances for different routes. I chose 40 points(cities) for
+evaluation to keep computation less costly. Since values for coordinates are randomly given continuous values between zero and one they do not
+represent physical units. 
 
 
-```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "Traveling Salesman Performance"}
+```{r,echo=FALSE,fig.height=3.,fig.width=7,fig.cap= "Traveling Salesman Performance"}
 p1 <- ggplot(tr_salesman , aes(x= Niters, y= Fitness, colour = algo_type)) +
   geom_line() + 
   geom_point() +
@@ -175,7 +173,13 @@ p2 <- ggplot(tr_salesman , aes(x= Niters, y=Time, colour = algo_type)) +
 multiplot(p1,p2,cols=2)
 ```
 
-
+From all four optimization methods used GA gave the best performance as shown in Fig2. It reached global optima value within
+few iterations at Dist=6, which is quit surprising.
+This time GA performed better than MIMIC because MIMIC uses joint probabilities and for this problem, various optimal solutions
+may be significantly different because the order of the points visited matters. 
+Both GA and MIMIC techniques were very computationally intense, thus iterations were done without repetition. SA performed as second
+best, which is not bad given it can only overcome local optimas if global optima is nearby. In TS problem search space grow exponentially
+with number op points and global optima may not necessarily be near. 
 
 
 ```{r,echo=FALSE,fig.height=3.0,fig.width=10,fig.cap= "Final best model path for all four algorithms"}
@@ -192,10 +196,20 @@ plot(MIMIC$X,MIMIC$Y, type="o", xlab="X", ylab="", yaxt='n', col = "orange", lwd
 
 ```
 
+Once optimizations are done, resulting rout corresponding to final best performed iteration is plotted in Fig3. By comparing
+path in 2D one can clearly see that GA demonstrate the best performance, where its trajectory show less crossings and connections between
+points are mostly made between nearest neighbors. In contrast trajectory for RHC and SA look like an entangled polymer with many crossings.
 
-## Knapcack
 
-```{r,echo=FALSE,fig.height=3.5,fig.width=7,fig.cap= "Knapsack Problem Performance"}
+### Knapsack Problem
+
+Knapsack problem originated from backpackers who try to maximize the occupying volume in a knapsack(backpack)
+while remaining within the weight threshold such that the knapsack can be carried long distances.
+It is considered as NP-hard(at least as hard as the hardest problems in non-deterministic polynomial
+acceptable problems) optimization problem with a set of constraints. 
+
+
+```{r,echo=FALSE,fig.height=3.,fig.width=7,fig.cap= "Knapsack Problem Performance"}
 
 p1 <- ggplot(knapsack , aes(x= Niters, y= Fitness, colour = algo_type)) +
   geom_line() + 
@@ -226,8 +240,40 @@ p2 <- ggplot(knapsack , aes(x= Niters, y=Time, colour = algo_type)) +
 multiplot(p1,p2,cols=2)
 ```
 
+Again all optimizations are iterated up to 100000 times with 10 repetitions in order to take the average, wheres only
+MIMIC algorithm is iterated up to 10000 times. MIMIC model, once again proved its robustness by scoring the highest in
+Fitness curve (Fitness=38500) at about 10000 iterations. 
 
-## ANN with Randomized Optimization 
+\pagebreak
+
+## Part 2: ANN with Randomized Optimization 
+
+In this part of the assignment we are asked to use one of the data sets used from previous supervised learning assignment
+and apply feed forward neural network with randomized optimization technique for finding its optimal weights. Main purpose
+of the task is to compare performance of backpropagation against three randomized optimization techniques. 
+
+\begin{figure}
+  \center
+    \includegraphics[width=6.70cm]{plots/AD_nnet_ROC_units_weight.pdf}
+    \includegraphics[width=8.0cm]{plots/AD_nnet_learning_curve.png}
+  \center
+  \caption{Cross validation(left) and learning curve(rights) plots for ANN taken from previous assignment.}
+  \label{fig:cross_val_nnet}
+\end{figure}
+
+
+### Data Preparation and Setup
+Adult data set used in a assignment 1 has 11 features and 45000 instances. For this assignment this data set is used
+making exactly same train test splitting as in a previous assignment. All multi-class categorical
+variables are mapped into binary class numeric variables[0,1], which increased number of features from 11 to 66. Data preprocessing
+is performed with R language and stored as csv inside clean_data folder. 
+In Fig.5 we show results from previous assignment. As shown via cross validation plot(left) optimal value for hidden
+units were 5, and with that best performance achieved with backpropagation was 84% accurate on test set. 
+For all optimization techniques same network structure is where input.units=66, only one hidden layer with hidden.units=5 and single
+output unit. 
+
+**RHC** is applied to feed forward nn to find optimal weights for network. Results are shown in Fig.6, where performance is 
+reported via RMSE for both training and testing sets versus number of randomized iterations. 
 
 
 ```{r, echo=FALSE,fig.height=3,fig.width=5,fig.cap= "Randomized Hill Climbing on Adult Data"}
@@ -251,8 +297,33 @@ p
 ```
 
 
+```{r, echo=FALSE,fig.height=3,fig.width=5,fig.cap= "Backpropagation on Adult Data"}
+col_names <- c("iters","RMSE_train","RMSE_test","dum","dum","time")
+AD_bprob <- read.table("output/AD_results_bprop", sep = "", header = FALSE, col.names = col_names)
 
-```{r, echo=FALSE,fig.height=3.5,fig.width=8,fig.cap= "Simulated Annealing Cooling"}
+p <- ggplot(AD_bprob, aes(x=iters)) +
+  geom_line(aes(y = sqrt(RMSE_train), colour = "train")) + 
+  geom_line(aes(y = sqrt(RMSE_test)+0.01, colour = "test")) +
+  #geom_point() +
+  theme_bw() +
+  labs(title = "", x = "Niters", y = "RMSE", color="") +
+  theme(legend.position =c(0.7,0.8), axis.title = element_text(size = 12.0),
+        axis.text = element_text(size=8, face = "bold"),
+        plot.title = element_text(size = 12, hjust = 0.5),
+        #text = element_text(family="Times New Roman"),
+        axis.text.x = element_text(colour="black"),
+        axis.text.y = element_text(colour="black"))
+
+```
+
+
+**SA** optimization method is applied to find best parameters(weights) for 1000 iterations performed at various cooling rates
+[0.15,0.35,0.55,0.70,0.95] Fig.7. The highest cooling rate (0.95) iteration shows high fluctuations in error as expected since
+at high cooling rate SA method is prone to fall into local optima. In contrast the slowest cooling iteration gradually falls into
+lowest RMSE by reaching global state.
+
+
+```{r, echo=FALSE,fig.height=3.,fig.width=8,fig.cap= "Simulated Annealing Cooling"}
 col_names <- c("iters","RMSE_train","RMSE_test","Temp")
 AD_sa_cv <- read.table("output/AD_resultsCV_temp", sep = "", header = FALSE, col.names = col_names)
 AD_sa_cv$Temp <- as.factor(AD_sa_cv$Temp)
@@ -286,7 +357,15 @@ multiplot(p1,p2,cols=2)
 ```
 
 
-```{r, echo=FALSE,fig.height=3.5,fig.width=8,fig.cap= "Genetic Algorithm RMSE for different parameters"}
+**GA** algorithm is used with different parameters of p=50,mate[20,10] and mutate[20,10]in a grid search passion. Best 
+performance is achieved by p=50, mate=20 and mutate=20 as shown in Fig.8. It showed best performance in contrast to other
+two algorithms by dropping the RMSE to as low as 0% within 200 iterations.
+In genetic algorithm, mutation provides exploration while cross-over leads the population to converge on good solutions
+(exploitation). Unfortunately, it is hard to understand how mate and mutate ratios affect exploration and exploitation. Thus,
+GA is known to be a black box for finding optimal solutions while unable to make it clear or intuitive.
+
+
+```{r, echo=FALSE,fig.height=3.,fig.width=8,fig.cap= "Genetic Algorithm RMSE for different parameters"}
 col_names <- c("iters","RMSE_train","RMSE_test","tuning")
 AD_ga_cv <- read.table("output/AD_resultsCV_ga", sep = "", header = FALSE, col.names = col_names)
 AD_ga_cv$tuning <- as.factor(AD_ga_cv$tuning)
@@ -319,4 +398,11 @@ p2 <- ggplot(AD_ga_cv , aes(x= iters, y= sqrt(RMSE_test), colour = tuning)) +
 multiplot(p1,p2,cols=2)
 ```
 
+## Conclusion
+
+In the first part MIMIC gave best performance among all optimization techniques for all 3 problems except for
+traveling salesman problem, where GA algorithm outperformed MIMIC. For the second part of assignment, 
+GA algorithm demonstrated best performance with RMSE as low as 0.1% and very high accuracy 99%. All three
+algorithms performed better(SA.RMSE=2%, RHC.RMSE=4%) compared to 84% accuracy obtained with backpropagation previously. 
+This, of course, is problem dependent and further study is highly recommended. 
 
